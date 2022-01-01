@@ -130,7 +130,7 @@ struct Args {
 }
 
 fn parse_arguments() -> anyhow::Result<Args> {
-    let app = App::new("sentences2csv")
+    let app = App::new(env!("CARGO_PKG_NAME"))
         .version(env!("CARGO_PKG_VERSION"))
         .author(env!("CARGO_PKG_AUTHORS"))
         .about("Turns lines of text into SVG files.")
