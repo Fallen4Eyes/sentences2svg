@@ -12,8 +12,6 @@ use clap::{App, Arg};
 use ttf_parser as ttf;
 use xmlwriter::*;
 
-const TEST_STRING: &str = "the quick brown fox jumps over the lazy dog";
-
 struct Builder {
     pub buffer: String,
     pub offset: f32,
@@ -297,8 +295,7 @@ fn main() {
         });
         w.start_element("svg");
         w.write_attribute("xmlns", "http://www.w3.org/2000/svg");
-        let font_data = std::fs::read("./fonts/Roboto-Regular.ttf").unwrap();
-        let face = ttf::Face::from_slice(&font_data, 0).unwrap();
+        
         let height = chars
             .iter()
             .filter_map(|id| face.glyph_bounding_box(*id))
