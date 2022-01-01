@@ -7,7 +7,6 @@ use std::{
     str::FromStr,
 };
 
-use anyhow::Context;
 use clap::{App, Arg};
 use ttf_parser as ttf;
 use xmlwriter::*;
@@ -91,8 +90,8 @@ struct FormatString {
 }
 
 impl FormatString {
-    pub fn index(&self, index: usize) -> String {
-        format!("{}{}{}.svg", self.left, index, self.right)
+    pub fn label(&self, label: &str) -> String {
+        format!("{}{}{}.svg", self.left, label, self.right)
     }
 }
 
@@ -104,12 +103,12 @@ struct Output {
 impl Output {
     pub fn write_file(
         &self,
-        index: usize,
+        label: &str,
         svg: XmlWriter,
     ) -> anyhow::Result<()> {
         use std::io::Write;
         let mut path = self.directory.clone();
-        path.push(self.format.index(index));
+        path.push(self.format.label(label));
         let mut file = File::create(&path).map_err(format_error(format!(
             "Could not create {}",
             path.as_os_str().to_str().unwrap()
@@ -284,7 +283,7 @@ fn main() {
         }
     };
 
-    for (i, line) in text.lines().enumerate() {
+    for line in text.lines() {
         let chars = line
             .chars()
             .filter_map(|c| face.glyph_index(c))
@@ -324,8 +323,8 @@ fn main() {
         });
         w.end_element();
         if let Err(e) = output
-            .write_file(i, w)
-            .map_err(format_error(format!("could not write file {}", i)))
+            .write_file(line, w)
+            .map_err(format_error(format!("could not write file for line \"{}\"", line)))
         {
             println!("{}", e);
             std::process::exit(1);
